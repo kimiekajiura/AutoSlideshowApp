@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
                 getContentsInfo();
             }else {
                 requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-                return;
-
             }
         }else {
             getContentsInfo();
@@ -139,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                             mHandler.post(new Runnable(){
                                 @Override
                                 public void run() {
+
                                     if (mCursor.moveToNext()) {
 
                                     }else{
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                                         mTimer.cancel();
                                         mTimer = null;
                                         Button button = (Button) findViewById(R.id.stop);
-                                        button.setText("再生/停止");
+                                        button.setText("再生");
                                         mStartButton.setEnabled(true);
                                         mModoruButton.setEnabled(true);
                                      }
@@ -186,14 +186,24 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] Permissions, int[] grantResult) {
-        if (grantResult[0] != PackageManager.PERMISSION_GRANTED) {
-            System.exit(0);
-        }else{
-            getContentsInfo();
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResult[0] == PackageManager.PERMISSION_GRANTED) {
+                    getContentsInfo();
+                }else {
+                    Toast toast= Toast.makeText(this,"拒否が選択されました。",Toast.LENGTH_SHORT);
+                    toast.show();
+                    finish();
+                    }
+                    break;
+            default:
+                break;
         }
     }
+
 
     private void getContentsInfo() {
         //画像情報取得
